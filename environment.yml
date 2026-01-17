@@ -1,0 +1,21 @@
+name: ai-doc
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - pytorch
+  - cpuonly
+  - faiss-cpu
+  - pip
+  - pip:
+      - pdfplumber
+      - PyPDF2
+      - sentence-transformers
+      - transformers
+      - scikit-learn
+      - tqdm
+      - python-dateutil
+      - regex
+      - ctransformers
