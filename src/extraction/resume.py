@@ -15,7 +15,13 @@ def extract_resume(text: str) -> dict:
 
     # Phone
     phone_match = re.search(PHONE_REGEX, text)
-    result["phone"] = phone_match.group(0) if phone_match else None
+    if phone_match:
+        phone = phone_match.group(0).strip()
+        # Remove any newlines or carriage returns
+        phone = phone.replace('\n', '').replace('\r', '').strip()
+        result["phone"] = phone
+    else:
+        result["phone"] = None
 
     # Experience: simple heuristic
     exp_match = re.search(r"(\d+)\s+years?", text, re.IGNORECASE)

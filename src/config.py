@@ -20,8 +20,8 @@ DOC_LABELS = {
     "Other": "general document",
 }
 
-# Below this similarity score → Unclassifiable
-CLASSIFICATION_THRESHOLD = 0.35
+# Classification: Always returns one of Invoice, Resume, Utility Bill, or Other
+# Files that cannot be read are marked as Unclassifiable in main pipeline
 
 # Embedding model (used for classification + retrieval)
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"

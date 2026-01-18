@@ -1,6 +1,10 @@
 from pathlib import Path
 
-from .pdf_reader import extract_text_from_pdf
+try:
+    from .pdf_reader import extract_text_from_pdf
+except ImportError:
+    # pdfplumber might not be installed, that's okay
+    pass
 
 
 def extract_text(file_path: Path) -> str:

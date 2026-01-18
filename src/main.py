@@ -65,11 +65,29 @@ from src.classification.classifier import DocumentClassifier
 from src.extraction.dispatcher import extract_fields
 
 # Step 1: Load documents
-docs = list_documents(folder_path=DATA_DIR)  # returns list of file paths
+docs = list_documents()  # returns list of file paths from INPUT_DOCS_DIR
 documents = []
+print(f"Found {len(docs)} documents to process...")
+
 for path in docs:
-    text = read_document(path)
-    documents.append({"file_name": path, "text": text})
+    try:
+        text = read_document(path)
+        documents.append({
+            "file_name": path.name, 
+            "text": text,
+            "readable": bool(text and text.strip())
+        })
+    except Exception as e:
+        print(f"Error reading {path.name}: {e}")
+        # Still add it but mark as not readable
+        documents.append({
+            "file_name": path.name,
+            "text": "",
+            "readable": False,
+            "error": str(e)
+        })
+
+print(f"Successfully loaded {len(documents)} documents.\n")
 
 # Step 2: Initialize classifier
 classifier = DocumentClassifier()
@@ -78,17 +96,37 @@ classifier = DocumentClassifier()
 final_output = {}
 
 for doc in documents:
-    cls_result = classifier.classify(doc["text"])
-    extracted = extract_fields(cls_result["label"], doc["text"])
-    
-    final_output[doc["file_name"]] = {
-        "class": cls_result["label"],
-        "confidence": cls_result["confidence"],
-        **extracted
-    }
+    try:
+        # If document couldn't be read, mark as Unclassifiable
+        if not doc["readable"]:
+            final_output[doc["file_name"]] = {
+                "class": "Unclassifiable",
+                "confidence": 0.0,
+                "reason": doc.get("error", "Unable to read file")
+            }
+            print(f"✗ {doc['file_name']}: Unclassifiable (unreadable - {doc.get('error', 'Unknown error')})")
+            continue
+        
+        cls_result = classifier.classify(doc["text"])
+        extracted = extract_fields(cls_result["label"], doc["text"])
+        
+        final_output[doc["file_name"]] = {
+            "class": cls_result["label"],
+            "confidence": cls_result["confidence"],
+            **extracted
+        }
+        print(f"✓ {doc['file_name']}: {cls_result['label']} ({cls_result['confidence']:.2%})")
+    except Exception as e:
+        print(f"✗ {doc['file_name']}: Error during classification - {e}")
+        final_output[doc["file_name"]] = {
+            "class": "Unclassifiable",
+            "confidence": 0.0,
+            "reason": f"Classification error: {str(e)}"
+        }
+        continue
 
 # Step 4: Save output.json
 with open("output.json", "w", encoding="utf-8") as f:
     json.dump(final_output, f, indent=2)
 
-print("Extraction complete! output.json created.")
+print(f"\nExtraction complete! {len(final_output)} documents processed. Results saved to output.json")

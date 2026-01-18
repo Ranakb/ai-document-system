@@ -12,6 +12,7 @@ dependencies:
   - pip:
       - pdfplumber
       - PyPDF2
+      - python-docx
       - sentence-transformers
       - transformers
       - scikit-learn
