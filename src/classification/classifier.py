@@ -140,6 +140,5 @@ class DocumentClassifier:
                 return {"label": "Other", "confidence": float(max_sim_value)}
 
             return {"label": predicted_label, "confidence": float(max_sim_value)}
-        except Exception as e:
-            print(f"Classification error: {e}")
+        except Exception:
             return {"label": "Other", "confidence": 0.0}

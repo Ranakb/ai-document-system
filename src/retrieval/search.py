@@ -27,10 +27,7 @@ class SemanticSearchEngine:
         
         # Try to load existing index
         if not rebuild_index:
-            if self.vector_store.load():
-                print("Loaded existing FAISS index.")
-            else:
-                print("No existing index found. Will create new one on index() call.")
+            self.vector_store.load()
     
     def index_documents(self, documents: List[Dict]) -> None:
         """
@@ -63,9 +60,6 @@ class SemanticSearchEngine:
         # Add all chunks to vector store
         self.vector_store.add_chunks(all_chunks)
         self.vector_store.save()
-        
-        stats = self.vector_store.get_stats()
-        print(f"Indexed {stats['total_chunks']} chunks from {len(documents)} documents.")
     
     def search(self, query: str, k: int = TOP_K_RESULTS) -> List[Dict]:
         """
@@ -79,7 +73,6 @@ class SemanticSearchEngine:
             List of result dicts with file_name, class, chunk_id, and similarity_score
         """
         if self.vector_store.index.ntotal == 0:
-            print("Vector store is empty. Please index documents first.")
             return []
         
         # Embed the query
