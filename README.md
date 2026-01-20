@@ -43,7 +43,6 @@ ai-document-system/
 │       └── __init__.py
 ├── data/
 │   ├── input_docs/             # Place your PDF/TXT files here
-│   └── processed/              # Processed documents cache
 ├── environment.yml             # Conda environment file
 ├── output.json                 # Classification and extraction results
 └── README.md                   # This file
@@ -281,10 +280,6 @@ PHONE_REGEX = r"..."
 
 # Search results
 TOP_K_RESULTS = 5
-
-# FAISS index path
-FAISS_INDEX_PATH = BASE_DIR / "data" / "faiss_index"
-```
 
 ## 🔄 Pipeline Workflow
 
